@@ -22,42 +22,82 @@ const Games = styled.div`
     /* background-color: red; */
 `
 
+const elementWidth = 290
 
 
 export class Ticker extends Component {
 
 
     state = {
-        games
+        games,
+        live: true,
+        loaded: false
+    }
+
+    componentDidMount() {
+        this.setState({
+            loaded: true
+        })
+        console.log("Games div scroll: ", this.gamesDiv.scrollLeft)
+        this.gamesDiv.addEventListener("scroll", this.handleScroll)
+
+    }
+
+    handleScroll = (event) => {
+        // console.log("Scroll event: ", event.target.scrollLeft)
     }
 
     scrollNext = () => {
-        console.log("Scrolling to next")
-        this.games.scrollBy({
-            left: 290,
+
+        const scrollAmount = this.gamesDiv.scrollLeft
+        const scrollBy = (Math.ceil(scrollAmount / elementWidth) * elementWidth) - scrollAmount
+
+        this.gamesDiv.scrollBy({
+            left: scrollBy > 0 ? scrollBy : elementWidth,
             behavior: "smooth"
         })
+        this.setState({}, this.showPrev())
+
     }
 
     scrollPrev = () => {
 
-        console.log("Scrolling to previous")
-        this.games.scrollBy({
-            left: -290,
+        const scrollAmount = this.gamesDiv.scrollLeft
+        const scrollBy = (Math.floor(scrollAmount / elementWidth) * elementWidth) - scrollAmount
+        console.log("TCL: Ticker -> scrollPrev -> scrollBy", scrollBy)
+
+        // this.setState({}, this.showPrev())
+
+        this.gamesDiv.scrollBy({
+            left: scrollBy < 0 ? scrollBy : -elementWidth,
             behavior: "smooth"
         })
     }
 
+    showPrev = () => {
+        console.log("Can show: ", this.state.loaded && this.gamesDiv.scrollLeft !== 0)
+    }
+
 
     render() {
+
+
         return (
             <Container id="ticker">
-                <Live live />
-                <TickerButton left onClick={this.scrollPrev} />
-                <Games ref={el => this.games = el}>
+                <Live live={this.state.live} />
+                <TickerButton
+                    left
+                    onClick={this.scrollPrev}
+                />
+                {this.state.loaded && this.gamesDiv.scrollLeft !== 0 &&
+                    <div />
+                }
+                <Games ref={el => this.gamesDiv = el}>
                     {this.state.games.map((game, i) => <Game key={i} game={game} />)}
                 </Games>
-                <TickerButton onClick={this.scrollNext} />
+                <TickerButton
+                    onClick={this.scrollNext}
+                />
             </Container>
         )
     }

@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React from "react"
 import styled from "styled-components"
 import { Text } from "../Text"
 
@@ -38,19 +38,8 @@ export const Game = ({ game }) => {
     } = game
     console.log("TCL: Game -> game", game)
 
-    const element = useRef(null)
-
-    const testScroll = () => {
-        console.log("Scrolling ", element)
-        element.current.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-            inline: 'start',
-        })
-    }
-
     return (
-        <GameContainer onClick={testScroll} ref={element}>
+        <GameContainer>
             <Column>
                 <Text bold={gameOver && team1.score > team2.score}>{team1.name}</Text>
                 <Text bold={gameOver && team2.score > team1.score}>{team2.name}</Text>
