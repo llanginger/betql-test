@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 
+// Generic text node with some additional props for ease of use and consistency
 export const Text = styled.p`
     font-family: "Montserrat", sans-serif;
     font-weight: ${props => props.bold ? "bold" : "normal"};
@@ -10,6 +11,6 @@ export const Text = styled.p`
         else if (props.right) { return "right" }
         else { return "left" }
     }};
-    margin: 5px 0px 5px 0px;
-    font-size: 14px;
+    margin: 3px 0px 3px 0px;
+    font-size: 14px
 `

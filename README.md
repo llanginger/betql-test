@@ -1,3 +1,15 @@
+# Leo Langinger Game Ticker Test.
+
+Please run yarn / npm install, followed by yarn / npm start.
+
+All relevant files are in src/components with the exception of the root-level App.js where a scroll behavior polyfill is initialized. 
+
+All UI state is held in the Ticker.js file's state object - any updates made there will display on save.
+
+I greatly enjoyed working on this project and welcome any feedback you may have!
+
+----------------------------------------------------------------
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
