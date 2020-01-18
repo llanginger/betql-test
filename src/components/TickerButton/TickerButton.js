@@ -19,11 +19,12 @@ const Container = styled.div`
 `
 
 
-
+// Ticker scroll button.
+// Takes a "left" boolean prop to determine which icon to use as well as an onClick prop
 export const TickerButton = ({ left, onClick }) => {
     return (
         <Container onClick={onClick}>
-            {left ? <FaChevronLeft /> : <FaChevronRight />}
+            {left ? <FaChevronLeft size={26} /> : <FaChevronRight size={26} />}
         </Container>
     )
 }

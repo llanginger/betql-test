@@ -1,9 +1,10 @@
 import React, { Component } from "react"
 import styled from "styled-components"
 import { Live } from "../Live"
-import { Game } from "../Game/Game"
-import { games } from "./data"
-import { TickerButton } from "../TickerButton/TickerButton"
+import { Game, Games, gameContainerWidth } from "../Games"
+import { games } from "./gameData"
+import { TickerButton } from "../TickerButton"
+import { GamesLoading } from "../GamesLoading"
 
 const Container = styled.div`
     height: 80px;
@@ -12,91 +13,74 @@ const Container = styled.div`
     flex-direction: row;
     justify-content: space-between;
     flex: 1;
-    /* overflow: auto; */
-    `
-
-const Games = styled.div`
-    display: flex;
-    flex-direction: row;
-    overflow: auto;
-    /* background-color: red; */
 `
 
-const elementWidth = 290
-
-
 export class Ticker extends Component {
-
 
     state = {
         games,
         live: true,
-        loaded: false
+        loading: false
     }
 
-    componentDidMount() {
-        this.setState({
-            loaded: true
-        })
-        console.log("Games div scroll: ", this.gamesDiv.scrollLeft)
-        this.gamesDiv.addEventListener("scroll", this.handleScroll)
 
-    }
-
-    handleScroll = (event) => {
-        // console.log("Scroll event: ", event.target.scrollLeft)
-    }
-
-    scrollNext = () => {
-
+    // Helper method to determine exact amount to scroll - ensures the scroll button will always cause the scroll to line up the next/previous game component with the left side of the ticker
+    getScrollBy = (direction) => {
         const scrollAmount = this.gamesDiv.scrollLeft
-        const scrollBy = (Math.ceil(scrollAmount / elementWidth) * elementWidth) - scrollAmount
 
-        this.gamesDiv.scrollBy({
-            left: scrollBy > 0 ? scrollBy : elementWidth,
-            behavior: "smooth"
-        })
-        this.setState({}, this.showPrev())
-
+        if (direction === "next") {
+            const scrollBy = (Math.ceil(scrollAmount / gameContainerWidth) * gameContainerWidth) - scrollAmount
+            return scrollBy > 0 ? scrollBy : gameContainerWidth
+        } else if (direction === "prev") {
+            const scrollBy = (Math.floor(scrollAmount / gameContainerWidth) * gameContainerWidth) - scrollAmount
+            return scrollBy < 0 ? scrollBy : -gameContainerWidth
+        }
     }
 
-    scrollPrev = () => {
-
-        const scrollAmount = this.gamesDiv.scrollLeft
-        const scrollBy = (Math.floor(scrollAmount / elementWidth) * elementWidth) - scrollAmount
-        console.log("TCL: Ticker -> scrollPrev -> scrollBy", scrollBy)
-
-        // this.setState({}, this.showPrev())
-
+    // Method to scroll the game ticker children to the next / previous game in ticker
+    scroll = (direction) => {
         this.gamesDiv.scrollBy({
-            left: scrollBy < 0 ? scrollBy : -elementWidth,
+            left: this.getScrollBy(direction),
             behavior: "smooth"
         })
     }
 
-    showPrev = () => {
-        console.log("Can show: ", this.state.loaded && this.gamesDiv.scrollLeft !== 0)
+    // If loading, render the loading indicator, else render list of games.
+    // The "Games" component's ref is set in order to enable programatic scrolling.
+    // Note; the loading indicator is very basic. A more complete option would be to render enough placeholder "empty" games to fill the ticker
+    renderGames = () => {
+        return (
+            <Games ref={el => this.gamesDiv = el}>
+                {
+                    !this.state.loading ?
+                        this.state.games.map((game, i) => <Game key={i} game={game} />)
+                        : <GamesLoading />
+                }
+            </Games>
+        )
     }
 
+    // Nearly finished "bonus" work - fully functional, just not animated. Uncomment in render method to use.
+    renderPrevButton = () => {
+        if (!this.state.loading) {
+            return (
+                <TickerButton
+                    left
+                    onClick={() => this.scroll("prev")}
+                />
+
+            )
+        }
+    }
 
     render() {
-
-
         return (
             <Container id="ticker">
                 <Live live={this.state.live} />
+                {/* {this.renderPrevButton()} */}
+                {this.renderGames()}
                 <TickerButton
-                    left
-                    onClick={this.scrollPrev}
-                />
-                {this.state.loaded && this.gamesDiv.scrollLeft !== 0 &&
-                    <div />
-                }
-                <Games ref={el => this.gamesDiv = el}>
-                    {this.state.games.map((game, i) => <Game key={i} game={game} />)}
-                </Games>
-                <TickerButton
-                    onClick={this.scrollNext}
+                    onClick={() => this.scroll("next")}
                 />
             </Container>
         )

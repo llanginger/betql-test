@@ -3,7 +3,7 @@ import './App.css';
 import { Ticker } from './components/Ticker/Ticker';
 import smoothscroll from 'smoothscroll-polyfill';
 
-// Call the smooth scroll behavior polyfill to enable scrolling behavior across the board:
+// Smooth scroll behavior polyfill to enable scrolling behavior across the board:
 smoothscroll.polyfill();
 
 function App() {
